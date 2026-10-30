@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.itheima.mapper.OperateLogMapper">
+
+    <!-- 操作日志分页查询 -->
+    <select id="selectByCondition" resultType="com.itheima.entity.OperateLog">
+        select
+        ol.*,
+        u.name operateUserName
+        from
+        operate_log ol
+        left join user u on ol.operate_user_id = u.id
+        <where>
+            <if test="operateLogDto.operateUserName != null and operateLogDto.operateUserName != ''">
+                and u.name like concat('%', #{operateLogDto.operateUserName}, '%')
+            </if>
+            <if test="operateLogDto.className != null and operateLogDto.className != ''">
+                and ol.class_name like concat('%', #{operateLogDto.className}, '%')
+            </if>
+            <if test="operateLogDto.methodName != null and operateLogDto.methodName != ''">
+                and ol.method_name like concat('%', #{operateLogDto.methodName}, '%')
+            </if>
+        </where>
+        order by ol.operate_time desc
+    </select>
+
+</mapper>

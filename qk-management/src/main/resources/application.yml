@@ -1,0 +1,31 @@
+#数据库连接信息
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/qk
+    username: root
+    password: 091886zzt
+  servlet:
+    multipart:
+      max-file-size: 10MB  # 单文件最大值,默认1MB
+      max-request-size: 100MB  # 单个请求中文件总大小 , 默认10MB
+
+#mybatis-plus配置
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true  # 开启驼峰命名
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 打印sql
+  global-config:
+    db-config:
+      id-type: auto # 全局主键策略 数据库自增
+  mapper-locations: classpath*:/mappers/*.xml # 映射文件位置
+#spring事务管理日志
+logging:
+  level:
+    org.springframework.jdbc.support.JdbcTransactionManager: debug
+# 阿里云oss配置
+aliyun:
+  oss:
+    endpoint: https://oss-cn-wuhan-lr.aliyuncs.com
+    bucketName: bucket-wuhan-yhf
+    region: cn-wuhan-lr

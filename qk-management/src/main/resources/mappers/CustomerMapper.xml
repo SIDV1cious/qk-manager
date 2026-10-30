@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.itheima.mapper.CustomerMapper">
+
+    <!-- 客户列表查询 -->
+    <select id="selectByCondition" resultType="com.itheima.entity.Customer">
+        select *
+        from customer
+        <where>
+            <if test="customerDto.phone != null and customerDto.phone != ''">
+                and phone like concat('%', #{customerDto.phone}, '%')
+            </if>
+            <if test="customerDto.name != null and customerDto.name != ''">
+                and name like concat('%', #{customerDto.name}, '%')
+            </if>
+            <if test="customerDto.channel != null">
+                and channel = #{customerDto.channel}
+            </if>
+            <if test="customerDto.subject != null">
+                and subject = #{customerDto.subject}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+</mapper>

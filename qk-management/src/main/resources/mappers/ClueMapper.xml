@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.itheima.mapper.ClueMapper">
+<!--    Page<Clue> selectByCondition(IPage<Clue> objectPage, PageClueDto clueDto);-->
+
+    <select id="selectByCondition" resultType="com.itheima.entity.Clue">
+        select
+            c.id,
+            c.phone,
+            c.name,
+            c.channel,
+            c.create_time,
+            c.user_id,
+            u.name assignName,
+            c.status,
+            c.next_time
+        from
+            clue c
+            left join user u on c.user_id = u.id
+        <where>
+            and c.status in (1,2,3)
+            <if test="clueDto.clueId != null">
+                and c.id = #{clueDto.clueId}
+            </if>
+            <if test="clueDto.phone != null and clueDto.phone != '' ">
+                and c.phone like  concat('%',#{clueDto.phone},'%')
+            </if>
+            <if test="clueDto.status != null">
+                and c.status = #{clueDto.status}
+            </if>
+            <if test="clueDto.channel != null">
+                and c.channel = #{clueDto.channel}
+            </if>
+            <if test="clueDto.assignName != null and clueDto.assignName != '' ">
+                and u.name like concat('%',#{clueDto.assignName},'%')
+            </if>
+        </where>
+        order by c.update_time desc
+    </select>
+
+    <!--定义结果集映射
+id : 设置结果集映射的唯一标识
+type : 设置结果集映射的数据封装到哪一个类的对象中
+-->
+    <resultMap id="ClueDetailMap" type="com.itheima.entity.Clue" autoMapping="true">
+        <!--主键映射 : 查询结果中的注解字段和实体类的主键属性的映射关系-->
+        <id column="id" property="id"></id>
+        <!--一对多查询结果映射 : 查询结果的哪些列要封装到集合属性的元素对象中
+        - property : 实体类的集合属性名称
+        - ofType : 集合中的元素类型
+        - autoMapping : 是否开启自动映射
+        -->
+        <collection property="trackRecords" ofType="com.itheima.entity.ClueTrackRecord" autoMapping="true">
+            <!--主键字段映射-->
+            <id column="ct_id" property="id"></id>
+            <!--普通字段映射-->
+            <result column="ct_level" property="level"></result>
+            <result column="ct_subject" property="subject"></result>
+            <result column="ct_user_id" property="userId"></result>
+            <result column="ct_assignName" property="assignName"></result>
+            <result column="ct_create_time" property="createTime"></result>
+            <result column="ct_next_time" property="nextTime"></result>
+            <result column="ct_record" property="record"></result>
+        </collection>
+    </resultMap>
+
+    <!--Clue findDetailById(Integer id);-->
+    <select id="findDetailById" resultMap="ClueDetailMap">
+        select
+            c.id,
+            c.phone,
+            c.channel,
+            c.activity_id,
+            c.name,
+            c.gender,
+            c.age,
+            c.wechat,
+            c.qq,
+            c.subject,
+            c.level,
+            c.next_time,
+            ct.id ct_id,
+            ct.level ct_level,
+            ct.subject ct_subject,
+            ct.user_id ct_user_id,
+            u.name ct_assignName,
+            ct.create_time ct_create_time,
+            ct.next_time ct_next_time,
+            ct.record ct_record
+        from
+            clue c
+                left join clue_track_record ct on ct.clue_id = c.id
+                left join user u on ct.user_id = u.id
+        where
+            c.id = #{id}
+    </select>
+
+    <!--Page<Clue> pageCluePool(IPage<Clue> page, PageCluePoolDto poolDto);-->
+    <select id="pageCluePool" resultType="com.itheima.entity.Clue">
+        select
+            c.id,
+            c.phone,
+            c.channel,
+            c.name,
+            c.gender,
+            c.age,
+            a.name activityName,
+            c.create_time,
+            c.update_time
+        from
+            clue c
+        left join activity a on c.activity_id = a.id
+        <where>
+            and c.status = 4
+            <if test="poolDto.clueId!=null">
+                and c.id = #{poolDto.clueId}
+            </if>
+            <if test="poolDto.phone!=null and poolDto.phone!='' ">
+                and c.phone like  concat('%',#{poolDto.phone},'%')
+            </if>
+            <if test="poolDto.channel!=null">
+                and c.channel = #{poolDto.channel}
+            </if>
+        </where>
+        order by c.update_time desc
+    </select>
+
+    <!--OverviewVO overview();-->
+    <select id="overview" resultType="com.itheima.vo.OverviewVO">
+        select
+            count(*) clueTotal,
+            count(if(status=1,1,null)) clueWaitAllot,
+            count(if(status=2,1,null)) clueWaitFollow,
+            count(if(status=3,1,null)) clueFollowing,
+            count(if(status=4,1,null)) clueFalse,
+            count(if(status=5,1,null)) clueConvertBusiness
+        from clue
+    </select>
+
+</mapper>

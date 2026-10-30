@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.itheima.mapper.BusinessMapper">
+
+    <!-- 商机列表查询 -->
+    <select id="selectByCondition" resultType="com.itheima.entity.Business">
+        select
+        b.*,
+        u.name assignName
+        from
+        business b
+        left join user u on b.user_id = u.id
+        <where>
+            <if test="businessDto.businessId != null">
+                and b.id = #{businessDto.businessId}
+            </if>
+            <if test="businessDto.name != null and businessDto.name != ''">
+                and b.name like concat('%', #{businessDto.name}, '%')
+            </if>
+            <if test="businessDto.phone != null and businessDto.phone != ''">
+                and b.phone like concat('%', #{businessDto.phone}, '%')
+            </if>
+            <if test="businessDto.status != null">
+                and b.status = #{businessDto.status}
+            </if>
+            <if test="businessDto.assignName != null and businessDto.assignName != ''">
+                and u.name like concat('%', #{businessDto.assignName}, '%')
+            </if>
+        </where>
+        order by b.update_time desc
+    </select>
+
+    <!-- 商机详情结果集映射 -->
+    <resultMap id="BusinessDetailMap" type="com.itheima.entity.Business" autoMapping="true">
+        <id column="id" property="id"/>
+        <collection property="trackRecords" ofType="com.itheima.entity.BusinessTrackRecord" autoMapping="true">
+            <id column="tr_id" property="id"/>
+            <result column="tr_business_id" property="businessId"/>
+            <result column="tr_user_id" property="userId"/>
+            <result column="tr_track_status" property="trackStatus"/>
+            <result column="tr_key_items" property="keyItems"/>
+            <result column="tr_next_time" property="nextTime"/>
+            <result column="tr_record" property="record"/>
+            <result column="tr_create_time" property="createTime"/>
+            <result column="tr_assign_name" property="assignName"/>
+        </collection>
+    </resultMap>
+
+    <!-- 根据ID查询商机详情 -->
+    <select id="findDetailById" resultMap="BusinessDetailMap">
+        select
+            b.*,
+            tr.id tr_id,
+            tr.business_id tr_business_id,
+            tr.user_id tr_user_id,
+            tr.track_status tr_track_status,
+            tr.key_items tr_key_items,
+            tr.next_time tr_next_time,
+            tr.record tr_record,
+            tr.create_time tr_create_time,
+            u.name tr_assign_name
+        from
+            business b
+                left join business_track_record tr on tr.business_id = b.id
+                left join user u on tr.user_id = u.id
+        where
+            b.id = #{id}
+        order by tr.create_time desc
+    </select>
+
+    <!-- 公海池列表查询 -->
+    <select id="pageBusinessPool" resultType="com.itheima.entity.Business">
+        select
+        b.*
+        from
+        business b
+        <where>
+            and b.status = 4
+            <if test="poolDto.businessId != null">
+                and b.id = #{poolDto.businessId}
+            </if>
+            <if test="poolDto.name != null and poolDto.name != ''">
+                and b.name like concat('%', #{poolDto.name}, '%')
+            </if>
+            <if test="poolDto.phone != null and poolDto.phone != ''">
+                and b.phone like concat('%', #{poolDto.phone}, '%')
+            </if>
+            <if test="poolDto.subject != null">
+                and b.subject = #{poolDto.subject}
+            </if>
+        </where>
+        order by b.update_time desc
+    </select>
+
+    <!-- 首页商机概览统计 -->
+    <select id="overview" resultType="com.itheima.vo.OverviewVO">
+        select
+            count(*) businessTotal,
+            count(if(status=1,1,null)) businessWaitAllot,
+            count(if(status=2,1,null)) businessWaitFollow,
+            count(if(status=3,1,null)) businessFollowing,
+            count(if(status=4,1,null)) businessFalse,
+            count(if(status=5,1,null)) businessConvertCustomer
+        from business
+    </select>
+
+</mapper>
