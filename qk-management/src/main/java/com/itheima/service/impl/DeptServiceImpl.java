@@ -13,7 +13,6 @@ import com.itheima.service.DeptService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -29,7 +28,7 @@ public class DeptServiceImpl implements DeptService {
     public boolean addDept(Dept dept) {
 
         //1.验证"部门名称"是否存在
-        Dept deptResult = deptMapper.selectOne(
+        Dept deptResult = deptMapper.selectOne(  //Java 允许在实例方法中直接访问当前对象的成员变量,deptMapper.selectOne是this.deptMapper.selectOne的简写。
                 Wrappers.lambdaQuery(Dept.class)
                         .eq(Dept::getName, dept.getName())
         );
@@ -62,20 +61,20 @@ public class DeptServiceImpl implements DeptService {
     @Override
     public Dept findById(Integer id) {
         //直接调用持久层
-        return this.deptMapper.selectById(id);
+        return deptMapper.selectById(id);
     }
 
 
     @Override
     public boolean updateDept(Dept dept) {
         //直接调用持久层
-        return this.deptMapper.updateById(dept) == 1 ;
+        return deptMapper.updateById(dept) == 1 ;
     }
 
     @Override
     public boolean deleteDept(Integer id) {
         //判断此部门是否有用户
-        Long count = this.userMapper.selectCount(
+        Long count = userMapper.selectCount(
                 Wrappers.lambdaQuery(User.class)
                         .eq(User::getDeptId, id)
         );
@@ -84,7 +83,7 @@ public class DeptServiceImpl implements DeptService {
         }
 
         //直接调用持久层
-        return this.deptMapper.deleteById(id) == 1;
+        return deptMapper.deleteById(id) == 1;
 
     }
 

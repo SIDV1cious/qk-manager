@@ -17,7 +17,6 @@ public class ActivityController {
 
     @PostMapping("/activities")
     public Result addActivity(@RequestBody Activity activity) {
-        //1.验证用户是否登陆了--通行证
         boolean save = this.activityService.save(activity);
 
         return save ? Result.success() : Result.error("添加失败，请重试！");
@@ -30,7 +29,6 @@ public class ActivityController {
             @RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
-        //1.验证用户是否登陆了--通行证
         PageResult<Activity> pageResult = this.activityService.listByPage(channel, type, page, pageSize);
         return Result.success(pageResult);
     }
@@ -42,7 +40,6 @@ public class ActivityController {
 
     @PutMapping("/activities")
     public Result updateActivity(@RequestBody Activity activity) {
-        //1.验证用户是否登陆了--通行证
         boolean b = this.activityService.updateById(activity);
         return b ? Result.success() : Result.error("修改错误，请重试！");
     }
