@@ -7,7 +7,6 @@ import com.itheima.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -21,7 +20,7 @@ public class RoleController {
     public Result addRole(@RequestBody Role role) {
 
         //调用业务层
-        boolean save = this.roleService.save(role);
+        boolean save = roleService.save(role);
         return save ? Result.success() : Result.error("添加失败，请重试！");
     }
 
@@ -33,7 +32,7 @@ public class RoleController {
             @RequestParam(value = "pageSize",defaultValue = "10") Integer pageSize
     ){
         //调用业务层
-        PageResult<Role> pageResult = this.roleService.selectByPage(name, label, page, pageSize);
+        PageResult<Role> pageResult = roleService.selectByPage(name, label, page, pageSize);
         //返回
         return Result.success(pageResult);
     }
@@ -42,7 +41,7 @@ public class RoleController {
     @GetMapping("/{id}")
     public Result findById(@PathVariable Integer id) {
         //直接调用业务层
-        Role role = this.roleService.selectRoleById(id);
+        Role role = roleService.selectRoleById(id);
         //返回
         return Result.success(role);
     }
@@ -51,7 +50,7 @@ public class RoleController {
     @PutMapping
     public Result updateRole(@RequestBody Role role) {
         //直接调用业务层
-        boolean b = this.roleService.updateById(role);
+        boolean b = roleService.updateById(role);
         //返回
         return b ? Result.success() : Result.error("修改失败，请重试！");
     }
@@ -59,14 +58,14 @@ public class RoleController {
     //5.删除
     @DeleteMapping("/{id}")
     public Result deleteById(@PathVariable Integer id) {
-        return this.roleService.deleteRoleById(id) ?
+        return roleService.deleteRoleById(id) ?
                 Result.success() : Result.error("删除失败，请重试！");
     }
 
     //6.查所有
     @GetMapping("/list") //路径："/roles/list"
     public Result findAll(){
-        List<Role> roleList = this.roleService.findAll();
+        List<Role> roleList = roleService.findAll();
         return Result.success(roleList);
     }
 

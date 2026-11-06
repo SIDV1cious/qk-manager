@@ -38,7 +38,7 @@ public class DeptController {
                 @RequestParam(value = "pageSize",defaultValue = "10") Integer pageSize
             ){
         //传给业务层
-        PageResult<Dept> pageResult = this.deptService.deptList(name,status,page,pageSize);
+        PageResult<Dept> pageResult = deptService.deptList(name,status,page,pageSize);
         //封装返回结果
         return Result.success(pageResult);
     }
@@ -48,7 +48,7 @@ public class DeptController {
     @GetMapping("/depts/{id}")
     public Result findById(@PathVariable Integer id) {//路径参数，要使用@PathVariable注解
         //1.直接调用业务层
-        Dept dept = this.deptService.findById(id);
+        Dept dept = deptService.findById(id);
         //2.返回
         return Result.success(dept);
     }
