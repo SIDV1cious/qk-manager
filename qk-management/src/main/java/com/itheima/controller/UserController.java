@@ -1,3 +1,4 @@
+
 package com.itheima.controller;
 
 import com.itheima.common.PageResult;
@@ -13,53 +14,56 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 public class UserController {
+
     @Autowired
     private UserService userService;
-    //1.分页列表
+
+    // 1. 分页查询用户
     @GetMapping
-    public Result selectByPage(PageUserDto userDto){
-        //1.调用业务层
+    public Result selectByPage(PageUserDto userDto) {
         PageResult<User> byPage =
                 this.userService.findByPage(userDto);
-        //2.返回
+
         return Result.success(byPage);
-
-
     }
 
-    //2.添加用户
+    // 2. 添加用户
     @PostMapping
     public Result addUser(@RequestBody User user) {
-        //2.调用业务层
         boolean b = this.userService.addUser(user);
+
         return b ? Result.success() : Result.error("添加失败，请重试！");
     }
 
-    //3.删除用户(含：批量删除)
+    // 3. 删除用户（支持批量删除）
     @DeleteMapping("/{ids}")
     public Result deleteByIds(@PathVariable("ids") List<Integer> idList) {
-        //3.调用service删除
         boolean b = this.userService.deleteByIds(idList);
+
         return b ? Result.success() : Result.error("删除失败，请重试！");
     }
 
-    //4.通过id查询一个用户
+    // 4. 根据 ID 查询用户
     @GetMapping("/{id}")
     public Result findById(@PathVariable Integer id) {
-        User user = this.userService.findById(id);
+        User user = this.userService.getById(id);
+
         return Result.success(user);
     }
 
-    //5.修改
+    // 5. 修改用户
     @PutMapping
     public Result updateUser(@RequestBody User user) {
-        boolean b = this.userService.updateUser(user);
+        boolean b = this.userService.updateById(user);
+
         return b ? Result.success() : Result.error("修改失败，请重试！");
     }
 
-
+    // 6. 根据角色标签查询用户
     @GetMapping("/role/{roleLabel}")
     public Result getUserByRoleLabel(@PathVariable String roleLabel) {
-        return Result.success(this.userService.findUserByRoleLabel(roleLabel));
+        return Result.success(
+                this.userService.findUserByRoleLabel(roleLabel)
+        );
     }
 }

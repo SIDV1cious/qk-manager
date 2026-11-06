@@ -17,12 +17,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @TableName("user")
 public class User {
+
     @TableId(type = IdType.AUTO)
     private Integer id;
+
     private String username;
 
     @JsonIgnore
     private String password;
+
     private String name;
     private String phone;
     private String email;
@@ -41,7 +44,12 @@ public class User {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime;
 
+    @TableField(exist = false)
     private String deptName;
+
+    @TableField(exist = false)
     private String roleName;
+
     private String salt;//盐值
+
 }
